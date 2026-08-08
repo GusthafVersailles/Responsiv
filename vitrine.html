@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Vitrine — Teste de Responsividade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#F6F4EF;
+    --surface:#FFFFFF;
+    --surface-2:#FBFAF6;
+    --ink:#1C1B18;
+    --muted:#8C8577;
+    --border:#E7E2D8;
+    --accent:#AD8636;
+    --accent-ink:#FFFFFF;
+    --accent-soft:rgba(173,134,54,0.12);
+    --shadow:rgba(28,27,24,0.16);
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --serif: "Fraunces", Georgia, serif;
+    --chrome-h: 38px;
+  }
+  body.dark{
+    --bg:#121110;
+    --surface:#1A1917;
+    --surface-2:#201F1C;
+    --ink:#F1EEE7;
+    --muted:#948D80;
+    --border:#2E2C27;
+    --accent:#DDB569;
+    --accent-ink:#1A1917;
+    --accent-soft:rgba(221,181,105,0.14);
+    --shadow:rgba(0,0,0,0.55);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{height:100%; margin:0;}
+  body{
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    overflow:hidden;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    padding:14px 20px;
+    display:flex;
+    gap:14px;
+    align-items:center;
+    border-bottom:1px solid var(--border);
+    background:var(--surface);
+    flex-wrap:wrap;
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  .brand{
+    font-family: var(--serif);
+    font-style:italic;
+    font-weight:500;
+    font-size:21px;
+    letter-spacing:0.3px;
+    color:var(--ink);
+    white-space:nowrap;
+    padding-right:6px;
+  }
+  .brand .dot{ color:var(--accent); }
+
+  .url-wrap{
+    flex:1;
+    min-width:160px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:0 6px 0 14px;
+    transition: border-color 0.15s ease;
+  }
+  .url-wrap:focus-within{ border-color: var(--accent); }
+  .url-wrap svg{ flex:0 0 auto; opacity:0.5; }
+  #urlInput{
+    flex:1;
+    border:none;
+    background:transparent;
+    font-family: var(--mono);
+    font-size:13.5px;
+    padding:11px 0;
+    color:var(--ink);
+    outline:none;
+    min-width:80px;
+  }
+  #urlInput::placeholder{ color: var(--muted); }
+
+  button{
+    font-family: var(--sans);
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:0.3px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--ink);
+    border-radius:999px;
+    padding:10px 18px;
+    cursor:pointer;
+    white-space:nowrap;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    transition: all 0.15s ease;
+  }
+  button:hover{ border-color: var(--accent); }
+  button:active{ transform: scale(0.97); }
+  button.primary{ background:var(--ink); color:var(--surface); border-color:var(--ink); }
+  button.primary:hover{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  button.icon{ padding:10px; width:38px; height:38px; }
+  button.icon svg{ margin:0 auto; }
+  button.toggle.active{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
+  body.dark button.toggle.active{ color:var(--accent); }
+  button svg{ stroke: currentColor; }
+
+  /* ---------- info panel ---------- */
+  #infoBanner{
+    display:none;
+    background:var(--surface-2);
+    border-bottom:1px solid var(--border);
+    color:var(--muted);
+    font-size:12.5px;
+    padding:12px 20px;
+    line-height:1.5;
+    align-items:center;
+    gap:14px;
+    border-left:3px solid var(--accent);
+  }
+  #infoBanner.show{ display:flex; }
+  #infoBanner button{ border:none; background:none; padding:0; color:var(--accent); text-decoration:none; font-weight:600; border-radius:0; }
+
+  /* ---------- toolbar ---------- */
+  .toolbar{
+    display:flex;
+    align-items:flex-end;
+    gap:22px;
+    padding:12px 20px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    flex-wrap:wrap;
+  }
+  .field-label{
+    display:block;
+    font-size:9.5px;
+    font-weight:700;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .dim-group{ display:flex; align-items:center; gap:8px; }
+  .dim-group input{
+    font-family: var(--mono);
+    font-size:13.5px;
+    width:68px;
+    text-align:center;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 6px;
+    background:var(--surface-2);
+    color:var(--ink);
+    outline:none;
+  }
+  .dim-group input:focus{ border-color: var(--accent); }
+  .dim-group .x{ color:var(--muted); font-family:var(--mono); }
+  .btn-row{ display:flex; gap:8px; }
+  .toolbar .spacer{ flex:1; }
+  .toolbar .sep{ width:1px; height:30px; background:var(--border); }
+  .zoom-group{ display:flex; align-items:center; gap:2px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:2px; }
+  .zoom-group button{ border:none; background:transparent; padding:8px 12px; border-radius:999px; }
+  .zoom-group button:hover{ background:var(--accent-soft); border:none; }
+  #zoomLabel{ font-family:var(--mono); font-size:12px; color:var(--muted); width:46px; text-align:center; }
+
+  /* ---------- stage ---------- */
+  #stage{
+    position:relative;
+    flex:1;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 0%, var(--surface-2) 0%, var(--bg) 70%);
+    touch-action:none;
+    transition: background 0.25s ease;
+  }
+
+  /* frame chrome bar (floats above frame) */
+  .chrome-bar{
+    position:absolute;
+    z-index:8;
+    height: var(--chrome-h);
+    background: var(--surface);
+    border:1px solid var(--border);
+    border-bottom:none;
+    border-radius:10px 10px 0 0;
+    display:flex;
+    align-items:center;
+    padding:0 12px;
+    gap:10px;
+    box-shadow: 0 -2px 10px var(--shadow);
+  }
+  .traffic{ display:flex; gap:5px; flex:0 0 auto; }
+  .traffic span{ width:8px; height:8px; border-radius:50%; background:var(--border); }
+  .chrome-url{
+    flex:1;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .chrome-dims{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--accent);
+    font-weight:600;
+    white-space:nowrap;
+    letter-spacing:0.3px;
+  }
+
+  /* frame */
+  #frame{
+    position:absolute;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:0 0 12px 12px;
+    box-shadow: 0 24px 48px -12px var(--shadow), 0 2px 6px var(--shadow);
+    z-index:6;
+  }
+  .iframe-wrap{ position:absolute; inset:0; overflow:hidden; background:#fff; border-radius:0 0 11px 11px;}
+  .iframe-wrap iframe{ border:0; display:block; transform-origin: 0 0; background:#fff; }
+
+  .empty-mark{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    pointer-events:none; opacity:0.5;
+  }
+  .empty-mark span{
+    font-family:var(--serif); font-style:italic; font-size:15px; color:var(--muted);
+  }
+
+  /* handles */
+  .handle{ position:absolute; z-index:9; background:transparent; }
+  .handle::after{
+    content:""; position:absolute; background:var(--ink); border-radius:3px;
+    box-shadow:0 0 0 3px var(--surface);
+    opacity:0.55;
+    transition: opacity 0.15s ease, background 0.15s ease;
+  }
+  .handle:hover::after, .handle:active::after{ opacity:1; background:var(--accent); }
+  .handle-n{ top:-8px; left:20px; right:20px; height:16px; cursor:ns-resize; }
+  .handle-n::after{ top:5px; left:50%; transform:translateX(-50%); width:32px; height:5px; }
+  .handle-s{ bottom:-8px; left:20px; right:20px; height:16px; cursor:ns-resize; }
+  .handle-s::after{ bottom:5px; left:50%; transform:translateX(-50%); width:32px; height:5px; }
+  .handle-e{ right:-8px; top:20px; bottom:20px; width:16px; cursor:ew-resize; }
+  .handle-e::after{ right:5px; top:50%; transform:translateY(-50%); width:5px; height:32px; }
+  .handle-w{ left:-8px; top:20px; bottom:20px; width:16px; cursor:ew-resize; }
+  .handle-w::after{ left:5px; top:50%; transform:translateY(-50%); width:5px; height:32px; }
+  .handle-ne{ top:-9px; right:-9px; width:22px; height:22px; cursor:nesw-resize; }
+  .handle-ne::after{ top:6px; right:6px; width:9px; height:9px; border-radius:50%; }
+  .handle-nw{ top:-9px; left:-9px; width:22px; height:22px; cursor:nwse-resize; }
+  .handle-nw::after{ top:6px; left:6px; width:9px; height:9px; border-radius:50%; }
+  .handle-se{ bottom:-9px; right:-9px; width:22px; height:22px; cursor:nwse-resize; }
+  .handle-se::after{ bottom:6px; right:6px; width:9px; height:9px; border-radius:50%; }
+  .handle-sw{ bottom:-9px; left:-9px; width:22px; height:22px; cursor:nesw-resize; }
+  .handle-sw::after{ bottom:6px; left:6px; width:9px; height:9px; border-radius:50%; }
+
+  .empty-hint{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    color:var(--muted); font-size:13.5px; text-align:center; max-width:300px; line-height:1.6;
+    pointer-events:none;
+  }
+  .empty-hint .serif{ font-family:var(--serif); font-style:italic; font-size:17px; color:var(--ink); display:block; margin-bottom:6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Vitrine<span class="dot">.</span></div>
+
+  <div class="url-wrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="urlInput" placeholder="seusite.com" inputmode="url" autocapitalize="off" autocorrect="off">
+  </div>
+  <button class="primary" id="goBtn">Carregar</button>
+  <button class="icon" id="newTabBtn" title="Abrir em nova aba">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+  </button>
+  <button class="icon" id="themeBtn" title="Alternar tema">
+    <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/></svg>
+  </button>
+  <button class="icon" id="infoToggleBtn" title="Sobre limitações">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/></svg>
+  </button>
+</header>
+
+<div id="infoBanner">
+  <span>Alguns sites recusam ser exibidos aqui por política própria de segurança (X-Frame-Options / CSP). Funciona bem com projetos hospedados por você — localhost, Vercel, Netlify, GitHub Pages. Tela em branco costuma significar isso.</span>
+  <button id="closeBannerBtn">Entendi</button>
+</div>
+
+<div class="toolbar">
+  <div class="dim-group">
+    <div>
+      <span class="field-label">Largura</span>
+      <input type="number" id="wInput" value="390">
+    </div>
+    <span class="x" style="margin-top:14px;">×</span>
+    <div>
+      <span class="field-label">Altura</span>
+      <input type="number" id="hInput" value="844">
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="btn-row">
+    <button class="icon toggle" id="lockBtn" title="Travar proporção">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </button>
+    <button class="icon" id="rotateBtn" title="Girar 90°">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3.6-7.2"/><polyline points="21 3 21 9 15 9"/></svg>
+    </button>
+  </div>
+
+  <div class="sep"></div>
+
+  <div>
+    <span class="field-label">Zoom</span>
+    <div class="zoom-group">
+      <button id="zoomOutBtn">−</button>
+      <span id="zoomLabel">100%</span>
+      <button id="zoomInBtn">+</button>
+    </div>
+  </div>
+
+  <button class="toggle active" id="fitBtn">Ajustar à tela</button>
+
+  <div class="spacer"></div>
+  <button id="resetBtn">Reiniciar</button>
+</div>
+
+<div id="stage">
+  <div class="chrome-bar" id="chromeBar">
+    <div class="traffic"><span></span><span></span><span></span></div>
+    <div class="chrome-url" id="chromeUrl">nenhum site carregado</div>
+    <div class="chrome-dims" id="chromeDims">390 × 844</div>
+  </div>
+  <div id="frame">
+    <div class="iframe-wrap">
+      <iframe id="previewFrame"></iframe>
+      <div class="empty-mark" id="emptyMark"><span>Vitrine</span></div>
+    </div>
+    <div class="handle handle-n" data-h="n"></div>
+    <div class="handle handle-s" data-h="s"></div>
+    <div class="handle handle-e" data-h="e"></div>
+    <div class="handle handle-w" data-h="w"></div>
+    <div class="handle handle-ne" data-h="ne"></div>
+    <div class="handle handle-nw" data-h="nw"></div>
+    <div class="handle handle-se" data-h="se"></div>
+    <div class="handle handle-sw" data-h="sw"></div>
+  </div>
+  <div class="empty-hint" id="emptyHint"><span class="serif">Comece por uma URL</span>Digite o endereço acima e toque em "Carregar". Depois é só puxar qualquer borda ou canto para testar os limites do layout.</div>
+</div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const frame = document.getElementById('frame');
+  const iframe = document.getElementById('previewFrame');
+  const wInput = document.getElementById('wInput');
+  const hInput = document.getElementById('hInput');
+  const zoomLabel = document.getElementById('zoomLabel');
+  const emptyHint = document.getElementById('emptyHint');
+  const emptyMark = document.getElementById('emptyMark');
+  const fitBtn = document.getElementById('fitBtn');
+  const lockBtn = document.getElementById('lockBtn');
+  const chromeBar = document.getElementById('chromeBar');
+  const chromeUrl = document.getElementById('chromeUrl');
+  const chromeDims = document.getElementById('chromeDims');
+
+  const MARGIN = 26;
+  const TOP_RESERVE = 38 + 26; // chrome bar + margin
+  const MIN_W = 90, MIN_H = 90, MAX_W = 4000, MAX_H = 3000;
+
+  let rect = { x:0, y:0, w:390, h:844 };
+  let origin = { x:0, y:0 };
+  let scale = 1;
+  let fitMode = true;
+  let lockAspect = false;
+  let lockedRatio = rect.w/rect.h;
+
+  function stageSize(){ return { w: stage.clientWidth, h: stage.clientHeight }; }
+
+  function computeFitScale(w,h){
+    const s = stageSize();
+    const availW = s.w - MARGIN*2;
+    const availH = s.h - TOP_RESERVE - MARGIN;
+    let f = Math.min(availW / w, availH / h);
+    f = Math.min(f, 1);
+    return Math.max(f, 0.08);
+  }
+
+  function recenter(){
+    const s = stageSize();
+    origin.x = (s.w - rect.w*scale)/2;
+    origin.y = TOP_RESERVE + (s.h - TOP_RESERVE - MARGIN - rect.h*scale)/2;
+  }
+
+  function clampRect(){
+    rect.w = Math.min(MAX_W, Math.max(MIN_W, rect.w));
+    rect.h = Math.min(MAX_H, Math.max(MIN_H, rect.h));
+  }
+
+  function applyFit(recenterAfter){
+    if(fitMode) scale = computeFitScale(rect.w, rect.h);
+    if(recenterAfter !== false){ rect.x = 0; rect.y = 0; recenter(); }
+  }
+
+  function render(){
+    clampRect();
+    const screenX = origin.x + rect.x*scale;
+    const screenY = origin.y + rect.y*scale;
+    const screenW = rect.w*scale;
+    const screenH = rect.h*scale;
+
+    frame.style.left = screenX + 'px';
+    frame.style.top = screenY + 'px';
+    frame.style.width = screenW + 'px';
+    frame.style.height = screenH + 'px';
+
+    iframe.style.width = rect.w + 'px';
+    iframe.style.height = rect.h + 'px';
+    iframe.style.transform = 'scale(' + scale + ')';
+
+    chromeBar.style.left = screenX + 'px';
+    chromeBar.style.top = (screenY - 38) + 'px';
+    chromeBar.style.width = screenW + 'px';
+    chromeDims.textContent = Math.round(rect.w) + ' × ' + Math.round(rect.h);
+
+    wInput.value = Math.round(rect.w);
+    hInput.value = Math.round(rect.h);
+    zoomLabel.textContent = Math.round(scale*100) + '%';
+  }
+
+  // ---------- dragging ----------
+  let drag = null;
+
+  function onPointerDown(e){
+    const h = e.currentTarget.dataset.h;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag = { h, startX: e.clientX, startY: e.clientY, r0: { x: rect.x, y: rect.y, w: rect.w, h: rect.h } };
+    e.preventDefault();
+  }
+
+  function onPointerMove(e){
+    if(!drag) return;
+    const dx = (e.clientX - drag.startX)/scale;
+    const dy = (e.clientY - drag.startY)/scale;
+    const h = drag.h;
+    const { x, y, w, h:hh } = drag.r0;
+    let newW = w, newH = hh, newX = x, newY = y;
+
+    const affectsE = h.includes('e');
+    const affectsW = h.includes('w');
+    const affectsN = h.includes('n');
+    const affectsS = h.includes('s');
+
+    if(affectsE) newW = w + dx;
+    if(affectsW) newW = w - dx;
+    if(affectsS) newH = hh + dy;
+    if(affectsN) newH = hh - dy;
+
+    if(lockAspect){
+      if((affectsE||affectsW) && (affectsN||affectsS)){
+        const sX = newW/w, sY = newH/hh;
+        const s = (Math.abs(dx) > Math.abs(dy)) ? sX : sY;
+        newW = w*s; newH = hh*s;
+      } else if(affectsE||affectsW){
+        newH = newW/lockedRatio;
+      } else if(affectsN||affectsS){
+        newW = newH*lockedRatio;
+      }
+    }
+
+    newW = Math.min(MAX_W, Math.max(MIN_W, newW));
+    newH = Math.min(MAX_H, Math.max(MIN_H, newH));
+
+    if(affectsW) newX = (x+w) - newW;
+    if(affectsN) newY = (y+hh) - newH;
+
+    rect = { x:newX, y:newY, w:newW, h:newH };
+    render();
+  }
+
+  function onPointerUp(){
+    if(!drag) return;
+    drag = null;
+    origin.x = origin.x + rect.x*scale;
+    origin.y = origin.y + rect.y*scale;
+    rect.x = 0; rect.y = 0;
+    if(fitMode){ scale = computeFitScale(rect.w, rect.h); recenter(); }
+    lockedRatio = rect.w/rect.h;
+    render();
+  }
+
+  document.querySelectorAll('.handle').forEach(h => h.addEventListener('pointerdown', onPointerDown));
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
+
+  // ---------- toolbar ----------
+  function finalizeExternalChange(){
+    rect.x = 0; rect.y = 0;
+    if(fitMode) scale = computeFitScale(rect.w, rect.h);
+    recenter();
+    lockedRatio = rect.w/rect.h;
+    render();
+  }
+
+  wInput.addEventListener('change', ()=>{
+    rect.w = Math.min(MAX_W, Math.max(MIN_W, parseInt(wInput.value||390,10)));
+    if(lockAspect) rect.h = rect.w/lockedRatio;
+    finalizeExternalChange();
+  });
+  hInput.addEventListener('change', ()=>{
+    rect.h = Math.min(MAX_H, Math.max(MIN_H, parseInt(hInput.value||844,10)));
+    if(lockAspect) rect.w = rect.h*lockedRatio;
+    finalizeExternalChange();
+  });
+
+  lockBtn.addEventListener('click', function(){
+    lockAspect = !lockAspect;
+    this.classList.toggle('active', lockAspect);
+    lockedRatio = rect.w/rect.h;
+  });
+
+  document.getElementById('rotateBtn').addEventListener('click', ()=>{
+    const w = rect.w; rect.w = rect.h; rect.h = w;
+    finalizeExternalChange();
+  });
+
+  fitBtn.addEventListener('click', function(){
+    fitMode = true;
+    this.classList.add('active');
+    finalizeExternalChange();
+  });
+
+  function setManualZoom(newScale){
+    fitMode = false;
+    fitBtn.classList.remove('active');
+    scale = Math.min(2, Math.max(0.1, newScale));
+    rect.x = 0; rect.y = 0;
+    recenter();
+    render();
+  }
+  document.getElementById('zoomInBtn').addEventListener('click', ()=> setManualZoom(scale*1.15));
+  document.getElementById('zoomOutBtn').addEventListener('click', ()=> setManualZoom(scale/1.15));
+
+  // ---------- reset: back to "just opened" state ----------
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    iframe.src = 'about:blank';
+    urlInput.value = '';
+    chromeUrl.textContent = 'nenhum site carregado';
+    emptyHint.style.display = '';
+    emptyMark.style.display = '';
+
+    rect = { x:0, y:0, w:390, h:844 };
+    fitMode = true;
+    fitBtn.classList.add('active');
+    lockAspect = false;
+    lockBtn.classList.remove('active');
+    finalizeExternalChange();
+  });
+
+  // ---------- url loading ----------
+  const urlInput = document.getElementById('urlInput');
+  function normalizeUrl(v){
+    v = v.trim();
+    if(!v) return null;
+    if(!/^https?:\/\//i.test(v)) v = 'https://' + v;
+    return v;
+  }
+  function load(){
+    const u = normalizeUrl(urlInput.value);
+    if(!u) return;
+    emptyHint.style.display = 'none';
+    emptyMark.style.display = 'none';
+    chromeUrl.textContent = u.replace(/^https?:\/\//,'');
+    iframe.src = u;
+  }
+  document.getElementById('goBtn').addEventListener('click', load);
+  urlInput.addEventListener('keydown', e=>{ if(e.key==='Enter') load(); });
+  document.getElementById('newTabBtn').addEventListener('click', ()=>{
+    const u = normalizeUrl(urlInput.value);
+    if(u) window.open(u, '_blank');
+  });
+
+  // ---------- info panel ----------
+  const banner = document.getElementById('infoBanner');
+  document.getElementById('infoToggleBtn').addEventListener('click', ()=> banner.classList.toggle('show'));
+  document.getElementById('closeBannerBtn').addEventListener('click', ()=> banner.classList.remove('show'));
+
+  // ---------- theme ----------
+  const themeBtn = document.getElementById('themeBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  const sunPaths = '<circle cx="12" cy="12" r="4"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/>';
+  const moonPath = '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/>';
+  themeBtn.addEventListener('click', ()=>{
+    const dark = document.body.classList.toggle('dark');
+    themeIcon.innerHTML = dark ? moonPath : sunPaths;
+  });
+
+  // ---------- resize ----------
+  window.addEventListener('resize', ()=>{
+    if(fitMode) scale = computeFitScale(rect.w, rect.h);
+    recenter();
+    render();
+  });
+
+  // init
+  iframe.src = 'about:blank';
+  applyFit(true);
+  render();
+})();
+</script>
+</body>
+</html>
